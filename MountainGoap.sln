@@ -3,14 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MountainGoap.Async", "MountainGoap.Async\MountainGoap.Async.csproj", "{3EBEB82D-FD0F-4194-B8C0-0C276203536F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples.Async", "Examples.Async\Examples.Async.csproj", "{22E10E1F-2DA6-4E69-9252-EE653D90A1C4}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MountainGoapLogging.Async", "MountainGoapLogging.Async\MountainGoapLogging.Async.csproj", "{6102C0D5-E087-4F6E-A477-03B3CDAC0FAC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MountainGoapTest.Async", "MountainGoapTest.Async\MountainGoapTest.Async.csproj", "{32147608-90CE-4D4C-8A58-0789C5B0CCED}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MountainGoap", "MountainGoap\MountainGoap.csproj", "{99C829A7-A44F-4C38-B8CE-69BCEBE00503}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MountainGoapLogging", "MountainGoapLogging\MountainGoapLogging.csproj", "{7A456856-E66E-439D-B820-DE93EA1665D0}"
@@ -25,22 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{3EBEB82D-FD0F-4194-B8C0-0C276203536F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3EBEB82D-FD0F-4194-B8C0-0C276203536F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3EBEB82D-FD0F-4194-B8C0-0C276203536F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3EBEB82D-FD0F-4194-B8C0-0C276203536F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{22E10E1F-2DA6-4E69-9252-EE653D90A1C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{22E10E1F-2DA6-4E69-9252-EE653D90A1C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{22E10E1F-2DA6-4E69-9252-EE653D90A1C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{22E10E1F-2DA6-4E69-9252-EE653D90A1C4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6102C0D5-E087-4F6E-A477-03B3CDAC0FAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6102C0D5-E087-4F6E-A477-03B3CDAC0FAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6102C0D5-E087-4F6E-A477-03B3CDAC0FAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6102C0D5-E087-4F6E-A477-03B3CDAC0FAC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{32147608-90CE-4D4C-8A58-0789C5B0CCED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32147608-90CE-4D4C-8A58-0789C5B0CCED}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32147608-90CE-4D4C-8A58-0789C5B0CCED}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32147608-90CE-4D4C-8A58-0789C5B0CCED}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99C829A7-A44F-4C38-B8CE-69BCEBE00503}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99C829A7-A44F-4C38-B8CE-69BCEBE00503}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99C829A7-A44F-4C38-B8CE-69BCEBE00503}.Release|Any CPU.ActiveCfg = Release|Any CPU

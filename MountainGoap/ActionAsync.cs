@@ -8,79 +8,10 @@ namespace MountainGoap {
     using System.Linq;
     using System.Reflection;
 
-    public interface IAction
-    {
-        public string Name { get; set; }
-        
-        /// <summary>
-        /// Gets or sets multiplier for delta value to provide delta cost.
-        /// </summary>
-        StateCostDeltaMultiplierCallback? StateCostDeltaMultiplier { get; set; }
-
-        /// <summary>
-        /// Gets or sets the execution status of the action.
-        /// </summary>
-        ExecutionStatus ExecutionStatus { get; set; }
-
-        /// <summary>
-        /// Makes a copy of the action.
-        /// </summary>
-        /// <returns>A copy of the action.</returns>
-        IAction Copy();
-
-        /// <summary>
-        /// Sets a parameter to the action.
-        /// </summary>
-        /// <param name="key">Key to be set.</param>
-        /// <param name="value">Value to be set.</param>
-        void SetParameter(string key, object value);
-
-        /// <summary>
-        /// Gets a parameter to the action.
-        /// </summary>
-        /// <param name="key">Key for the value to be retrieved.</param>
-        /// <returns>The value stored at the key specified.</returns>
-        object? GetParameter(string key);
-
-        /// <summary>
-        /// Gets the cost of the action.
-        /// </summary>
-        /// <param name="currentState">State as it will be when cost is relevant.</param>
-        /// <returns>The cost of the action.</returns>
-        float GetCost(ConcurrentDictionary<string, object?> currentState);
-
-        /// <summary>
-        /// Determines whether or not an action is possible.
-        /// </summary>
-        /// <param name="state">The current world state.</param>
-        /// <returns>True if the action is possible, otherwise false.</returns>
-        bool IsPossible(ConcurrentDictionary<string, object?> state);
-
-        /// <summary>
-        /// Gets all permutations of parameters possible for an action.
-        /// </summary>
-        /// <param name="state">World state when the action would be performed.</param>
-        /// <returns>A list of possible parameter dictionaries that could be used.</returns>
-        List<Dictionary<string, object?>> GetPermutations(ConcurrentDictionary<string, object?> state);
-
-        /// <summary>
-        /// Applies the effects of the action.
-        /// </summary>
-        /// <param name="state">World state to which to apply effects.</param>
-        void ApplyEffects(ConcurrentDictionary<string, object?> state);
-
-        /// <summary>
-        /// Sets all parameters to the action.
-        /// </summary>
-        /// <param name="parameters">Dictionary of parameters to be passed to the action.</param>
-        void SetParameters(Dictionary<string, object?> parameters);
-    }
-
     /// <summary>
     /// Represents an action in a GOAP system.
     /// </summary>
-    public class Action : IAction
-    {
+    public class ActionAsync : IAction {
         /// <summary>
         /// Name of the action.
         /// </summary>
@@ -99,12 +30,12 @@ namespace MountainGoap {
         /// <summary>
         /// The executor callback for the action.
         /// </summary>
-        private readonly ExecutorCallback executor;
+        private readonly ExecutorAsyncCallback executor;
 
         /// <summary>
         /// The cost callback for the action.
         /// </summary>
-        private readonly CostCallback costCallback;
+        private readonly CostAsyncCallback costCallback;
 
         /// <summary>
         /// Preconditions for the action. These things are required for the action to execute.
@@ -134,12 +65,12 @@ namespace MountainGoap {
         /// <summary>
         /// State mutator for modifying state programmatically after action execution or evaluation.
         /// </summary>
-        private readonly StateMutatorCallback? stateMutator;
+        private readonly StateMutatorAsyncCallback? stateMutator;
 
         /// <summary>
         /// State checker for checking state programmatically before action execution or evaluation.
         /// </summary>
-        private readonly StateCheckerCallback? stateChecker;
+        private readonly StateCheckerAsyncCallback? stateChecker;
 
         /// <summary>
         /// Parameters to be passed to the action.
@@ -162,7 +93,7 @@ namespace MountainGoap {
         /// <param name="stateMutator">Callback for modifying state after action execution or evaluation.</param>
         /// <param name="stateChecker">Callback for checking state before action execution or evaluation.</param>
         /// <param name="stateCostDeltaMultiplier">Callback for multiplier for delta value to provide delta cost.</param>
-        public Action(string? name = null, Dictionary<string, PermutationSelectorCallback>? permutationSelectors = null, ExecutorCallback? executor = null, float cost = 1f, CostCallback? costCallback = null, Dictionary<string, object?>? preconditions = null, Dictionary<string, ComparisonValuePair>? comparativePreconditions = null, Dictionary<string, object?>? postconditions = null, Dictionary<string, object>? arithmeticPostconditions = null, Dictionary<string, string>? parameterPostconditions = null, StateMutatorCallback? stateMutator = null, StateCheckerCallback? stateChecker = null, StateCostDeltaMultiplierCallback? stateCostDeltaMultiplier = null) {
+        public ActionAsync(string? name = null, Dictionary<string, PermutationSelectorCallback>? permutationSelectors = null, ExecutorAsyncCallback? executor = null, float cost = 1f, CostAsyncCallback? costCallback = null, Dictionary<string, object?>? preconditions = null, Dictionary<string, ComparisonValuePair>? comparativePreconditions = null, Dictionary<string, object?>? postconditions = null, Dictionary<string, object>? arithmeticPostconditions = null, Dictionary<string, string>? parameterPostconditions = null, StateMutatorAsyncCallback? stateMutator = null, StateCheckerAsyncCallback? stateChecker = null, StateCostDeltaMultiplierCallback? stateCostDeltaMultiplier = null) {
             if (permutationSelectors == null) this.permutationSelectors = new();
             else this.permutationSelectors = permutationSelectors;
             if (executor == null) this.executor = DefaultExecutorCallback;
@@ -190,12 +121,12 @@ namespace MountainGoap {
         /// <summary>
         /// Event that triggers when an action begins executing.
         /// </summary>
-        public static event BeginExecuteActionEvent OnBeginExecuteAction = (agent, action, parameters) => { };
+        public static event BeginExecuteActionAsyncEvent OnBeginExecuteAction = (agent, action, parameters) => Task.CompletedTask;
 
         /// <summary>
         /// Event that triggers when an action finishes executing.
         /// </summary>
-        public static event FinishExecuteActionEvent OnFinishExecuteAction = (agent, action, status, parameters) => { };
+        public static event FinishExecuteActionAsyncEvent OnFinishExecuteAction = (agent, action, status, parameters) => Task.CompletedTask;
 
         /// <summary>
         /// Gets or sets the execution status of the action.
@@ -207,7 +138,7 @@ namespace MountainGoap {
         /// </summary>
         /// <returns>A copy of the action.</returns>
         public IAction Copy() {
-            var newAction = new Action(Name, permutationSelectors, executor, cost, costCallback, preconditions.Copy(), comparativePreconditions.Copy(), postconditions.Copy(), arithmeticPostconditions.CopyNonNullable(), parameterPostconditions.Copy(), stateMutator, stateChecker, StateCostDeltaMultiplier) {
+            var newAction = new ActionAsync(Name, permutationSelectors, executor, cost, costCallback, preconditions.Copy(), comparativePreconditions.Copy(), postconditions.Copy(), arithmeticPostconditions.CopyNonNullable(), parameterPostconditions.Copy(), stateMutator, stateChecker, StateCostDeltaMultiplier) {
                 parameters = parameters.Copy()
             };
             return newAction;
@@ -251,17 +182,17 @@ namespace MountainGoap {
         /// </summary>
         /// <param name="agent">Agent executing the action.</param>
         /// <returns>The execution status of the action.</returns>
-        internal ExecutionStatus Execute(Agent agent) {
-            OnBeginExecuteAction(agent, this, parameters);
+        internal async Task<ExecutionStatus> ExecuteAsync(AgentAsync agent) {
+            await OnBeginExecuteAction(agent, this, parameters);
             if (IsPossible(agent.State)) {
-                var newState = executor(agent, this);
+                var newState = await executor(agent, this);
                 if (newState == ExecutionStatus.Succeeded) ApplyEffects(agent.State);
                 ExecutionStatus = newState;
-                OnFinishExecuteAction(agent, this, ExecutionStatus, parameters);
+                await OnFinishExecuteAction(agent, this, ExecutionStatus, parameters);
                 return newState;
             }
             else {
-                OnFinishExecuteAction(agent, this, ExecutionStatus.NotPossible, parameters);
+                await OnFinishExecuteAction(agent, this, ExecutionStatus.NotPossible, parameters);
                 return ExecutionStatus.NotPossible;
             }
         }
@@ -374,12 +305,12 @@ namespace MountainGoap {
         /// <param name="agent">Agent executing the action.</param>
         /// <param name="action">Action to be executed.</param>
         /// <returns>A Failed status, since the action cannot execute without a callback.</returns>
-        private static ExecutionStatus DefaultExecutorCallback(Agent agent, Action action) {
-            return ExecutionStatus.Failed;
+        private static Task<ExecutionStatus> DefaultExecutorCallback(AgentAsync agent, ActionAsync action) {
+            return Task.FromResult(ExecutionStatus.Failed);
         }
 
 #pragma warning disable S1172 // Unused method parameters should be removed
-        private static float DefaultCostCallback(Action action, ConcurrentDictionary<string, object?> currentState) {
+        private static float DefaultCostCallback(ActionAsync action, ConcurrentDictionary<string, object?> currentState) {
             return action.cost;
         }
 #pragma warning restore S1172 // Unused method parameters should be removed
